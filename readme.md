@@ -173,3 +173,259 @@ const vm = new Vue({
 
 ### 1.回顾Object.defineproperty方法
 
+没学过能叫回顾吗
+
+```js
+Object.defineproperty(对象, '属性', {配置项})
+```
+传入一个对象,遍历并生成数组
+
+```js
+Object.keys(对象)
+```
+
+Object.defineproperty方法加入的属性不可枚举
+
+修改办法:在配置项中加入
+
+```
+enumerable: true,
+```
+
+控制属性是否可以枚举，默认值是false
+
+```
+writable: true,
+```
+
+控制属性是否可以被修改，默认值是false
+
+```
+configurable: true,
+```
+
+控制属性是否可以被删除，默认值是false
+
+```
+get:function(){
+    return 'hello';
+}
+```
+
+当有人读取person的age属性时，getter会被调用，返回值就是age的值
+
+```
+set(value){
+    number=value;
+}
+```
+
+当有人修改person的age属性时，setter就会被调用，且会收到修改的具体值
+
+### 2.何为数据代理
+
+通过一个对象代理另一个对象中属性的操作（读/写）
+
+```js
+let obj = {x:100};
+let obj2 = {y:200}
+
+Object.defineProperty(obj2, 'x', {
+    get(){
+        return obj.x;
+    },
+    set(value){
+        obj.x = value;
+    }
+})
+```
+
+### 3.Vue中的数据代理
+
+* 读取name， getter工作
+* 修改name， setter工作
+
+![04a9791cec0e00a27f0c839029a5baf](D:\wechatfile\WeChat Files\wxid_0z1kzagu3rpg22\FileStorage\Temp\04a9791cec0e00a27f0c839029a5baf.jpg)
+
+data会保存在vm的属性_data中
+
+```js
+vm._data = options.data = data
+```
+
+所以验证:
+
+```js
+vm._data === data
+```
+
+![0cab40451165821adc1178d5b6ee4c3](D:\wechatfile\WeChat Files\wxid_0z1kzagu3rpg22\FileStorage\Temp\0cab40451165821adc1178d5b6ee4c3.jpg)
+
+1. 通过vm对象来代理data对象中的属性操作
+2. 更加方便操作data中的数据
+
+## 7-事件处理
+
+### 1.事件的基本使用
+
+绑定事件
+
+```html
+v-on:click="函数名"
+```
+
+事件要写在配置项中
+
+用methods
+
+```vue
+methods:{
+            函数名(event){
+                函数
+            }
+```
+
+event事件出发的元素
+
+```js
+methods:{
+            showInfo(event){
+                console.log(event.target);
+                console.log(this);
+            }
+        }
+```
+
+此处的this是vm对象
+
+如果用箭头函数,this是Window
+
+原则:
+
+* 接受了Vue的管理,最好都写成普通函数,不要使用箭头函数
+
+简写:
+
+```js
+@click="函数名"
+```
+
+```html
+<button @click="showInfo">点我提示信息</button>
+```
+
+传参:
+
+```html
+<button @click="showInfo2(66, $event)">点我提示信息</button>
+```
+
+直接用括号传
+
+$event占位符
+
+2.事件修饰符
+
+#### 1.阻止默认事件(常用)
+
+```js
+.prevent
+```
+
+```js
+<a href="https://www.bilibili.com/" @click.prevent="showInfo">点我提示信息</a>
+```
+
+#### 2.阻止事件冒泡(常用)
+
+```html
+.stop
+```
+
+```html
+<div @click="showInfo" class="demo1">
+        <button @click.stop="showInfo">点我提示信息</button>
+    </div>
+```
+
+#### 3.事件只会触发一次(常用)
+
+```html
+.once
+```
+
+```html
+<button @click.once="showInfo">点我提示信息</button>
+```
+
+#### 4.capture使用事件的捕获模式
+
+```html
+.capture
+```
+
+先捕获在冒泡
+
+#### 5.self
+
+只有event.target是当前操作的元素时才触发事件
+
+```html
+.self
+```
+
+#### 6.passive
+
+事件的默认行为立即执行,无需等待事件回调执行完毕
+
+滚动事件:
+
+wheel
+
+scroll
+
+### 2.键盘事件
+
+keydown按下去就触发
+
+keyup抬起才触发
+
+```
+<input type="text" placeholder="按下回车提示输入" @keyup.enter="showInfo">
+```
+
+```vue
+.enter
+```
+
+别名
+
+* 回车 enter
+* 删除 delete (捕获删除和退格)
+* 退出 esc
+* 空格 space
+* 换行 tab(特殊,必须配合keydown使用)
+* 上 up
+* 下 down
+* 左 left
+* 右 right
+
+用法特殊:Ctrl, Alt, shift, meta **系统修饰键**
+
+1. 配合keyup:按下修饰键的同时,再按下其他键,随后释放其他建,事件才会被触发
+2. 配合keydown使用,正常触发事件
+
+也可以用键码,不被推荐,已被弃用
+
+自定义键名
+
+```vue
+Vue.config.keyCodes.huiche = 13//定义了一个别名按键
+```
+
+不太推荐
+
+### 3.总结
+
+* 修饰符可以连用,有先后顺序
+* 键盘输入, 系统修饰键可以与普通键盘连用
