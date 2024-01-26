@@ -642,3 +642,20 @@ vm.$watch('isHot', function(newValue, oldValue){
 
 ## 10-绑定样式
 
+![image-20240126232134812](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240126232134812.png)
+
+绑定class样式--字符串写法
+
+适用于:样式的类名不确定,需要动态指定
+
+![image-20240126231843059](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240126231843059.png)
+
+绑定class样式--数组写法
+
+适用于:要绑定的样式个数不确定,名字也不确定
+
+![image-20240126231911299](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240126231911299.png)
+
+绑定class样式--对象写法
+
+适用于:要绑定的样式个数确定,名字也确定,但是要动态决定用不用
