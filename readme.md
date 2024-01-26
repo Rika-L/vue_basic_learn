@@ -429,3 +429,108 @@ Vue.config.keyCodes.huiche = 13//定义了一个别名按键
 
 * 修饰符可以连用,有先后顺序
 * 键盘输入, 系统修饰键可以与普通键盘连用
+
+## 8-计算属性
+
+### 1.姓名案例_插值语法实现
+
+### 2.姓名案例_methods实现
+
+* 模板中的表达式要简单
+
+methods方法:从this中找出参数
+
+```vue
+methods:{
+    fullName(){
+        return this.firstName+'-'+this.lastName;
+    }
+}
+```
+
+这么写效率不高
+
+### 3.姓名案例_计算属性实现
+
+#### get
+
+```vue
+computed:{
+            fullName:{
+                //当有人读取fullName时,get就会被调用,且返回值就作为fullName的值
+                get(){
+
+                }
+            }
+        }
+```
+
+也在vm上
+
+get会有缓存
+
+get什么时候调用:
+
+1. 初次读取fullName时
+2. 所依赖的数据发生变化时
+
+与methods相比的优势:缓存(复用), 效率更高,调试更方便
+
+#### set
+
+用于修改
+
+set什么时候调用:
+
+1. 当fullName被修改时
+
+```js
+computed:{
+    fullName:{
+        //当有人读取fullName时,get就会被调用,且返回值就作为fullName的值
+        get(){
+            return this.firstName + '-' + this.lastName;
+        },
+        set(value){
+            const arr = value.split('-');
+            this.firstName = arr[0];
+            this.lastName = arr[1];
+        }
+    }
+}
+```
+
+以上为完整示例
+
+### 4.计算属性简写
+
+**更多的情况:只读取,不修改**
+
+* 简写的前提:要确定只读不改才可以简写
+
+```js
+computed: {
+    fullName() {
+        return this.firstName + '-' + this.lastName;
+    }
+}
+```
+
+等于直接调用getter
+
+### 5.总结
+
+1. 计算属性最终会出现在vm上,直接读取使用即可
+2. 如果计算属性要被修改,必须要写set函数,且set函数中必须要引起计算式以来的数据发生变化
+
+## 9-监视属性
+
+### 1.天气案例
+
+绑定事件的时候
+
+```vue
+@xxx = 'yyy' 
+```
+
+yyy可以写一些简单的语句
