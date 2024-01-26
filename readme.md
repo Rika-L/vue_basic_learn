@@ -534,3 +534,111 @@ computed: {
 ```
 
 yyy可以写一些简单的语句
+
+### 2.天气案例_监视属性
+
+```vue
+immediate: true
+```
+
+watch
+
+```vue
+watch:{
+    isHot:{
+        //当isHot发生改变时被调用
+        handler(newValue, oldValue){
+            console.log(newValue, oldValue);
+        },
+        //immediate: true,//立即执行, 初始化时调用handler
+    }
+}
+```
+
+另一种方式:
+
+最后再写watch
+
+```vue
+vm.$watch('isHot', {
+    handler(newValue, oldValue) {
+        console.log(newValue, oldValue);
+    },
+})
+```
+
+* 监视属性变化时,回调函数自动调用
+* 监视属性必须存在,才能进行监视
+* 监视属性的两种写法
+
+### 3.深度监视
+
+```vue
+numbers: {
+    deep:true,
+    handler(newValue, oldValue) {
+        console.log('number改变了');
+    }
+}
+```
+
+监视多级结构中所有属性的变化
+
+* Vue中的watch默认不监测对象内部值的改变
+* 配置deep:true,可以监测对象内部值的改变
+* Vue自身可以监测对象内部值的变化
+* 使用watch的时候根据数据的具体结构,决定是否采用深度监视
+
+### 4.监视的简写
+
+* 简写的前提:不需要immdiate,deep及其他配置项
+
+```vue
+watch: {
+    
+    //正常写法
+    // isHot: {
+    //     handler(newValue, oldValue) {
+    //         console.log(newValue, oldValue);
+    //     },
+    // },
+    
+    //简写
+    isHot(newValue, oldValue){
+        console.log(newValue, oldValue);
+    },
+}
+```
+
+```vue
+//正常写法
+// vm.$watch('isHot', {
+//     handler(newValue, oldValue) {
+//         console.log(newValue, oldValue);
+//     }
+// })
+
+//简写
+vm.$watch('isHot', function(newValue, oldValue){
+    console.log(newValue, oldValue);
+})
+```
+
+不能写成箭头函数
+
+### 5.computed对比watch
+
+![image-20240126165355640](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240126165355640.png)
+
+**computed和watch之间的区别**
+
+* computed能完成的,watch都可以完成
+* wantch能完成的功能,computed不一定能完成.例如:watch能进行异步操作
+
+**两个重要的yuanze**
+
+* 所有被Vue管理的函数,最好写成普通函数,这样this指向的才是vm或组件实例对象
+* 所有不被vue管理的函数(定时器的回调函数,ajax回调函数等)最好写成箭头函数,这样this指向的才是vm或组件实例对象
+
+## 10-绑定样式
+
