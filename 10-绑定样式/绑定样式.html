@@ -49,20 +49,31 @@
     <br/><br/>
 
     <div class="basic" :class="classObj">{{name}}</div>
+    <br/><br/>
+
+    <div :style="StyleObj">{{name}}</div>
+    <div :style="[StyleObj, StyleObj2]">{{name}}</div>
 </div>
 <script type="text/javascript">
     Vue.config.productionTip = false;
 
-    new Vue({
+    const vm = new Vue({
         el: '#root',
         data: {
-            name: '五口巴',
+            name: 'Rika',
             mood: 'normal',
             arr: ['atguigu1', 'atguigu2', 'atguigu3'],
-            classObj:{
-                atguigu1:true,
-                atguigu2:false,
-            }
+            classObj: {
+                atguigu1: true,
+                atguigu2: false,
+            },
+            StyleObj: {
+                fontSize: '350px',
+                color:'red',
+            },
+            StyleObj2: {
+                backgroundColor:'orange',
+            },
         },
         methods: {
             changeMood() {

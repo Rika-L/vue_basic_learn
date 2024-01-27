@@ -659,3 +659,318 @@ vm.$watch('isHot', function(newValue, oldValue){
 绑定class样式--对象写法
 
 适用于:要绑定的样式个数确定,名字也确定,但是要动态决定用不用
+
+![image-20240127104856527](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127104856527.png)
+
+绑定style(对象方法)
+
+![image-20240127105057488](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127105057488.png)
+
+数组写法，比较少见
+
+### 总结
+
+![image-20240127105636906](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127105636906.png)
+
+## 11-条件渲染
+
+使用v-show做条件渲染
+
+```html
+<h2 v-show="false">Welcome to {{name}}</h2>
+```
+
+使用v-if做条件渲染
+
+```html
+<h2 v-if="false">Welcome to {{name}}</h2>
+```
+
+v-if直接把结构删除掉，比较狠
+
+![image-20240127112103136](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127112103136.png)
+
+如果第一个if执行后面直接跳过,类似于正常编程的流程
+
+还有个v-else
+
+* div紧密相连,不能被打断
+
+![image-20240127115908499](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127115908499.png)
+
+template不影响结构
+
+只能配合v-if,不能使用v-show
+
+### 总结
+
+* v-if适合切换频率较低的场景,因为会将不展示的DOM元素直接移除
+* v-show适用于切换频率较高的场景,仅仅只是将样式隐藏
+
+## 12-列表渲染
+
+### 1.基本列表
+
+v-for循环遍历
+
+```html
+<li v-for="p in persons" :key="p.id">{{p.name}}-{{p.age}}</li>
+```
+
+注意加key
+
+![image-20240127130801168](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127130801168.png)
+
+```html
+v-for="(p, index) in persons" :key="index"
+```
+
+```vue
+persons: [
+    {id: '001', name: '张三', age: 18},
+    {id: '002', name: '李四', age: 19},
+    {id: '003', name: '王五', age: 20},
+],
+```
+
+遍历数组
+
+接受多个参数:p是数据,key是索引
+
+也可以用of
+
+```html
+<li v-for="(p, key) in car" :key="key">{{key}}-{{p}}</li>
+```
+
+```vue
+car: {
+    name: '奥迪a8',
+    price: '70w',
+    color: 'green',
+}
+```
+
+遍历对象
+
+```html
+<li v-for="(char, index) in str" :key="index">{{char}}-{{index}}</li>
+```
+
+```
+str:'hello',
+```
+
+遍历字符串,少见
+
+```html
+<li v-for="(number, index) in 5" :key="index">{{number}}-{{index}}</li>
+```
+
+遍历指定次数,用得更少
+
+### 2. key的原理
+
+![1290ce3858bb99d38370e31261945fe](D:\wechatfile\WeChat Files\wxid_0z1kzagu3rpg22\FileStorage\Temp\1290ce3858bb99d38370e31261945fe.jpg)
+
+用index作为key会出问题：产生逆序添加/删除
+
+会产生没有必要的真实DOM更新，效率低
+
+![81f981eb199acc62ced9dfacd10c66d](D:\wechatfile\WeChat Files\wxid_0z1kzagu3rpg22\FileStorage\Temp\81f981eb199acc62ced9dfacd10c66d.jpg)
+
+用id就不会出问题
+
+如果你没写key，vue会自动将index补为key
+
+如果不存在对数据的逆序添加/逆序删除等破坏顺序的操作，仅用于渲染列表用于展示，使用idnex作为key没问题
+
+### 3.列表过滤
+
+```vue
+new Vue({
+    el: '#root',
+    data: {
+        keyword: '',
+        persons: [
+            {id: '001', name: '马冬梅', age: 18, sex: '女'},
+            {id: '002', name: '周冬雨', age: 19, sex: '女'},
+            {id: '003', name: '周杰伦', age: 20, sex: '男'},
+            {id: '004', name: '温兆伦', age: 21, sex: '男'},
+        ],
+        filPersons: [],
+    },
+    watch: {
+        keyword: {
+            immediate: true,
+            handler(value) {
+                this.filPersons = this.persons.filter((p) => {
+                    return p.name.indexOf(value) !== -1;
+                })
+            }
+        }
+    }
+})
+```
+
+用watch实现列表过滤
+
+```vue
+//计算属性实现
+new Vue({
+    el: '#root',
+    data: {
+        keyword: '',
+        persons: [
+            {id: '001', name: '马冬梅', age: 18, sex: '女'},
+            {id: '002', name: '周冬雨', age: 19, sex: '女'},
+            {id: '003', name: '周杰伦', age: 20, sex: '男'},
+            {id: '004', name: '温兆伦', age: 21, sex: '男'},
+        ],
+
+    },
+    computed: {
+        filPersons() {
+            return this.filPersons = this.persons.filter((p) => {
+                return p.name.indexOf(this.keyword) !== -1;
+            })
+        }
+    }
+})
+```
+
+计算属性实现
+
+### 4.列表排序
+
+```vue
+computed: {
+    filPersons() {
+        const arr = this.filPersons = this.persons.filter((p) => {
+            return p.name.indexOf(this.keyword) !== -1;
+        });
+        //判断是否需要排序
+        if (this.sortType) {
+            arr.sort((a, b) => {
+                return this.sortType === 1 ? b.age - a.age : a.age - b.age;
+            })
+        }
+        return arr;
+    }
+}
+```
+
+优雅！
+
+### 5.更新时的一个问题
+
+```vue
+methods: {
+    updateMei() {
+        // this.persons[0].name = '马老师';
+        // this.persons[0].age = 50;
+        // this.persons[0].sex = '男';
+        // this.persons[0] = {id: '001', name: '马老师', age: 60, sex: '男'}//不奏效
+    }
+}
+```
+
+不奏效的行没有监测到信息改变了
+
+修改方法:
+
+```vue
+this.persons.splice(0, 1,  {id: '001', name: '马老师', age: 60, sex: '男'})
+```
+
+### 6.7.Vue监测数据改变的原理_对象
+
+```javascript
+<script type="text/javascript" >
+
+    let data = {
+        name:'尚硅谷',
+        address:'北京',
+    }
+
+    //创建一个监视的实例对象，用于监视data中属性的变化
+    const obs = new Observer(data)
+    console.log(obs)
+
+    //准备一个vm实例对象
+    let vm = {}
+    vm._data = data = obs
+
+    function Observer(obj){
+        //汇总对象中所有的属性形成一个数组
+        const keys = Object.keys(obj)
+        //遍历
+        keys.forEach((k)=>{
+            Object.defineProperty(this,k,{
+                get(){
+                    return obj[k]
+                },
+                set(val){
+                    console.log(`${k}被改了，我要去解析模板，生成虚拟DOM.....我要开始忙了`)
+                    obj[k] = val
+                }
+            })
+        })
+    }
+```
+
+### 8.Vue.set()
+
+```vue
+Vue.set(vm.student, 'sex', '男')
+```
+
+```vue
+vm.$set(vm.student, 'sex', '女')
+```
+
+作用一样
+
+响应式
+
+```vue
+Vue.set(vm._data, 'leader', '一个帅气的男老师')
+```
+
+局限性:不能直接往vm对象上或者vm._data上设置
+
+![image-20240127172202656](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127172202656.png)
+
+### 9.Vue监测数据改变的原理_数组
+
+Vue对数组的监测靠包装数组身上的常用修改数组的方法实现的
+
+![image-20240127180343012](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127180343012.png)
+
+也可以这样改
+
+```vue
+Vue.set(vm.student.hobby,0,'打台球')
+```
+
+### 10.总结Vue数据监测
+
+* Vue会监视data中所有层次的数据
+* 通过setter实现监视，且要在new Vue时就传入要监测的数据
+* 对象后追加的属性，Vue默认不做响应式处理
+* 如需给后添加的属性做响应式，使用如下API
+* 1. Vue.set(target， propertyName/index， value)
+  2. vm.$set(target， propertyName/index， value)
+* 如何监测数组中的数据:
+* 1. 包裹数组更新元素的方法实现
+* 在Vue中修改数组中的某一个元素一定要用如下方法:
+* 1. push()
+  2. pop()
+  3. shift()
+  4. unshift()
+  5. splice()
+  6. sort()
+  7. reverse()
+* 1. Vue.set()
+  2. vm.$set()
+* Vue.set() 和 vm.$set() 不能给 vm 或 vm 的根数据对象 添加属性!!!![image-20240127191253432](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127191253432.png)
