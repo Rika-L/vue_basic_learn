@@ -974,3 +974,138 @@ Vue.set(vm.student.hobby,0,'打台球')
 * 1. Vue.set()
   2. vm.$set()
 * Vue.set() 和 vm.$set() 不能给 vm 或 vm 的根数据对象 添加属性!!!![image-20240127191253432](C:\Users\22093\AppData\Roaming\Typora\typora-user-images\image-20240127191253432.png)
+
+## 13-收集表单数据
+
+修饰符：
+
+* .number 收集成数字类型
+* .lazy 防抖,输入完失去焦点才会收集
+* .trim 去掉前后空格
+
+若
+
+```html
+男 <input type="radio" name="sex" value="man" v-model="userInfo.sex">
+女 <input type="radio" name="sex" value="woman" v-model="userInfo.sex"><br/><br/>
+```
+
+v-model收集的是value值,且要给标签配置value
+
+若
+
+```html
+爱好：
+学习<input type="checkbox" v-model="userInfo.hobby" value="study">
+打游戏<input type="checkbox" v-model="userInfo.hobby" value="game">
+吃饭<input type="checkbox" v-model="userInfo.hobby" value="eat"><br/><br/>
+```
+
+1. 没有配置value属性,那么手机的就是checked(勾选或者未勾选,是布尔值)
+2. 配置input的value属性
+3. * v-model的初始值是非数组,收集的是checked
+   * v-model初始值是数组,收集的就是value组成的数组
+
+## 14-过滤器
+
+```html
+<!--    过滤器实现-->
+<h3>现在是{{time | timeFormater}}</h3>
+```
+
+```vue
+filters: {
+    timeFormater(value) {
+        return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+    }
+},
+```
+
+多个过滤器之前可以串联
+
+全局过滤器
+
+```vue
+Vue.filter('mySlice', function (value) {
+    return value.slice(0, 4);
+})
+```
+
+Vue3已经移除了过滤器
+
+适用于一些简单逻辑的判断
+
+## 15-内置指令
+
+### 1.v-text
+
+```html
+<div v-text="xxx"></div>
+```
+
+会拿到xxx的值替换整个div的内容， 里面的内容不能解析标签
+
+### 2.v-html
+
+作用跟v-text相同，但是能解析HTML
+
+![8e8d3017b47e0f864b48a3df5976f31](D:\wechatfile\WeChat Files\wxid_0z1kzagu3rpg22\FileStorage\Temp\8e8d3017b47e0f864b48a3df5976f31.jpg)
+
+有安全隐患
+
+### 3.v-cloak
+
+```
+v-cloak
+```
+
+本质是一个特殊属性，Vue实例创建完毕并接管容器后，会删掉v-cloak属性
+
+使用css配合可以解决网速慢时页面展示出{{}}的问题
+
+```css
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+```
+
+### 4.v-once
+
+```vue
+v-once
+```
+
+v-once所在的节点在初次动态渲染后,就视为静态内容了
+
+以后数据变化不会引起v-once所在结构的更新,用于优化性能
+
+### 5.v-pre
+
+```vue
+v-pre
+```
+
+ 跳过其所在节点的编译过程
+
+## 16-自定义指令
+
+### 1.函数式
+
+自定义指令何时会被调用：
+
+1. 指令与元素成功绑定时
+2. 指令所在的模板重新解析时
+
+```html
+<h2>放大十倍后的n值是：<span v-big="n"></span></h2>
+```
+
+```vue
+directives: {
+    big(element, binding) {
+        element.innerHTML = binding.value * 10;
+    }
+}
+```
