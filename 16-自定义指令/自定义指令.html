@@ -10,6 +10,8 @@
     <h2>当前的n值是<span v-text="n"></span></h2>
     <h2>放大十倍后的n值是：<span v-big="n"></span></h2>
     <button @click="n++">点我n++</button>
+    <hr>
+    <input type="text" v-fbind:value="n">
 </div>
 <script type="text/javascript">
     Vue.config.productionTip = false;
@@ -22,6 +24,17 @@
         directives: {
             big(element, binding) {
                 element.innerHTML = binding.value * 10;
+            },
+            fbind: {
+                bind(element, binding) {
+                    element.value = binding.value;
+                },//指令与元素成功绑定时调用
+                inserted(element) {
+                    element.focus();
+                },//指令所在元素被插入页面时调用
+                update(element, binding) {
+                    element.value = binding.value;
+                },//指令所在的模板被重新解析时调用
             }
         }
     })

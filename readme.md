@@ -1109,3 +1109,31 @@ directives: {
     }
 }
 ```
+
+### 2.对象式
+
+```vue
+自定义指令名: {
+    bind(){},//指令与元素成功绑定时调用
+    inserted(){},//指令所在元素被插入页面时调用
+    update(){},//指令所在的模板被重新解析时调用
+    },
+```
+
+```vue
+directives: {
+    fbind: {
+                    bind(element, binding) {
+                        element.value = binding.value;
+                    },//指令与元素成功绑定时调用
+                    inserted(element) {
+                        element.focus();
+                    },//指令所在元素被插入页面时调用
+                    update(element, binding) {
+                        element.value = binding.value;
+                    },//指令所在的模板被重新解析时调用
+                }
+}
+```
+
+用函数式基本相当于对象式不写inserted
