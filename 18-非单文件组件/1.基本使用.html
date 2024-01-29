@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+<div id="root">
+    <school></school>
+    <hr>
+    <student></student>
+    <hello></hello>
+</div>
+<script type="text/javascript">
+    Vue.config.productionTip = false;
+
+
+    //创建school组件
+    const school = Vue.extend({
+        template: `
+          <div>
+            <h2>学校名称:{{ schoolName }}</h2>
+            <h2>学校地址:{{ address }}</h2>
+            <button @click="showName">点我提示学校名</button>
+          </div>`,
+        methods:{
+            showName(){
+                alert(this.schoolName);
+            }
+        },
+        data() {
+            return {
+                schoolName: 'WYU',
+                address: 'Jiangmen',
+            }
+        }
+    })
+
+    const student = Vue.extend({
+        template: `
+          <div>
+            <h2>学校名称:{{ studentName }}</h2>
+            <h2>学校地址:{{ age }}</h2>
+          </div>
+        `,
+        data() {
+            return {
+                studentName: 'Rika',
+                age: 18,
+            }
+        }
+    })
+
+    const hello = Vue.extend({
+        template: `
+        <div>
+        <h2>你好啊!{{name}}</h2>
+</div>
+        `,
+        data(){
+            return {
+                name:'Tom',
+            }
+        }
+    })
+
+    Vue.component('hello', hello)
+
+    new Vue({
+        el: '#root',
+        components: {
+            //注册组件
+            school,
+            student,
+        }
+    })
+
+</script>
+</body>
+</html>

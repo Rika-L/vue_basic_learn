@@ -1137,3 +1137,204 @@ directives: {
 ```
 
 用函数式基本相当于对象式不写inserted
+
+### 3.总结
+
+创建全局指令
+
+```vue
+Vue.directive('fbind',{
+    bind(element, binding) {
+        element.value = binding.value;
+    },//指令与元素成功绑定时调用
+    inserted(element) {
+        element.focus();
+    },//指令所在元素被插入页面时调用
+    update(element, binding) {
+        element.value = binding.value;
+    },//指令所在的模板被重新解析时调用
+})
+```
+
+directive IDE会爆黄,待解决
+
+* 指令定义时不加v-,但使用时要加v-
+* 指令名如果是多个单词,要使用kebab-case命名方式,不要使用cameCase
+
+## 17-生命周期
+
+### 1.引出生命周期
+
+```
+mounted(){}
+```
+
+Vue完成模板的解析并把真是DOM元素放入页面（挂载完毕）后调用,初始
+
+生命周期又名：生命周期回调函数，生命周期函数，**生命周期钩子**
+
+就是关键时刻Vue调用特殊函数
+
+生命周期函数名字不可更改
+
+this指向是vm或者组件实例对象
+
+### 2.分析生命周期
+
+![生命周期](D:\BaiduNetdiskDownload\资料（含课件）\02_原理图\生命周期.png)
+
+* 挂载完毕（重要）
+* 将要销毁（重要）
+
+8个生命周期钩子
+
+常用生命周期钩子:
+
+1. mounted 发送Ajax请求,启动定时器,绑定自定义事件,订阅消息等初始化操作
+2. beforeDestroy 清楚定时器,解绑自定义事件,取消订阅消息等收尾工作
+
+销毁Vue实例
+
+1. 销毁后开发者工具看不到任何信息
+2. 自定义事件失效,原生有效
+3. 一般不会在beforeDestroy操作数据
+
+## 18-非单文件组件
+
+**组件的定义-- 实现应用中局部功能代码和资源的集合**
+
+非单文件组件:一个文件中包含n个组件
+
+单文件组件:一个文件中只包含1个组件
+
+### 1.基本使用
+
+创建组件
+
+```
+const xxx = Vue.extend({})
+```
+
+注册组件(局部注册)
+
+```
+components: {
+    //注册组件
+    school,
+    student,
+}
+```
+
+```html
+const school = Vue.extend({
+        template: `
+          <div>
+            <h2>学校名称:{{ schoolName }}</h2>
+            <h2>学校地址:{{ address }}</h2>
+            <button @click="showName">点我提示学校名</button>
+          </div>`,
+        methods:{
+            showName(){
+                alert(this.schoolName);
+            }
+        },
+        data() {
+            return {
+                schoolName: 'WYU',
+                address: 'Jiangmen',
+            }
+        }
+    })
+```
+
+```html
+<school></school>
+```
+
+强大,无需多言
+
+```html
+const hello = Vue.extend({
+        template: `
+        <div>
+        <h2>你好啊!{{name}}</h2>
+</div>
+        `,
+        data(){
+            return {
+                name:'Tom',
+            }
+        }
+    })
+
+    Vue.component('hello', hello)
+```
+
+全局注册
+
+### 2.组件的几个注意点
+
+命名:
+
+一个单词:
+
+* 首字母小写
+* 首字母大写
+
+多个单词:
+
+* 用-连接:my-school
+* 每一个单词的首字母大写MySchool [前提:脚手架]
+
+组件名尽可能避开HTML预留的元素[h2,H2]会当成普通元素处理
+
+传入name属性:指定组件在开发者工具中呈现的名字
+
+```
+<School/>
+```
+
+也可以这么使用,但是必须在脚手架中使用
+
+一个简写方式
+
+```vue
+const xxx = Vue.extend({})
+```
+
+简写为
+
+```vue
+const xxx = {}
+```
+
+自动执行Vue.extend()
+
+### 3.组件的嵌套
+
+由app管理(一人之下万人之上)
+
+```
+//定义app组件
+const app = Vue.extend({
+    template:`
+    <div>
+      <hello></hello>
+      <school></school>
+    </div>
+    `,
+    components:{
+        school,
+        hello,
+    }
+})
+```
+
+### 4.VueCompoment
+
+1. 组件的本质是名为VueCompoment的构造函数,且不是由程序员定义的,是Vue.extend生成的
+2. 我们只需要写组件标签,Vue解析时会帮我们创建组件的实例对象
+3. 每次调用Vue.extend,返回的都是一个全新的VueCompoment(特别注意)
+4. 组件配置中,data函数,methods中的函数,watch中的函数,computed中的函数,他们的this均指向VueCompoment实例对象
+5. VueCompoment简称vc
+

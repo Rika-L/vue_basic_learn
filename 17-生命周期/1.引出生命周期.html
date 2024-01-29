@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+<div id="root">
+    <h2 :style="{opacity}" style="font-size: 100px">欢迎学习Vue</h2>
+
+</div>
+<script type="text/javascript">
+    Vue.config.productionTip = false;
+    new Vue({
+        el: '#root',
+        data: {
+            opacity: 1,
+        },
+        methods: {
+
+        },
+        //Vue完成模板的解析并把真是DOM元素放入页面（挂载完毕）后调用,初始
+        mounted(){
+                setInterval(() => {
+                    this.opacity -= 0.01;
+                    if (this.opacity <= 0) {
+                        this.opacity = 1;
+                    }
+                }, 16);
+        }
+    });
+
+    //在Vue外部，不推荐
+    // setInterval(() => {
+    //     vm.opacity -= 0.01;
+    //     if (vm.opacity <= 0.3) {
+    //         vm.opacity = 1;
+    //     }
+    // }, 16)
+</script>
+</body>
+</html>
