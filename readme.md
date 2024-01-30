@@ -1338,3 +1338,22 @@ const app = Vue.extend({
 4. 组件配置中,data函数,methods中的函数,watch中的函数,computed中的函数,他们的this均指向VueCompoment实例对象
 5. VueCompoment简称vc
 
+## 19-单文件组件
+
+```vue
+<script>
+export default {
+  name: ""
+}
+</script>
+
+<template>
+
+</template>
+
+<style scoped>
+
+</style>
+```
+
+基本结构
